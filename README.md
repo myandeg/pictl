@@ -3,8 +3,8 @@
 A command line tool for Image Compression and Upload (ex. S3-type)
 
 > **This is a personal fork** of [zhonger/pictl](https://github.com/zhonger/pictl), used locally only
-> (installed with `pipx install -e`, not published to PyPI or Homebrew). See
-> [Fork notes](#fork-notes-v040) below for what's different and why.
+> (installed with `pipx`, not published to PyPI or Homebrew). See the
+> [release notes](https://github.com/myandeg/pictl/releases) for what's different from upstream and why.
 
 Engligh | [中文简体](https://lisz.me/tech/project/pictl.html)
 
@@ -47,24 +47,24 @@ It seems very similar to PicGo 😂, but it will be different.
 
 ## Installation
 
-### This fork (pipx, editable)
-
-The way this fork is actually installed and kept up to date locally:
+### This fork (pipx)
 
 ```bash
 brew install pipx
 pipx ensurepath
-git clone git@github.com:myandeg/pictl.git ~/Developer/pictl
-pipx install -e ~/Developer/pictl
+git clone --branch v0.4.0 git@github.com:myandeg/pictl.git ~/Developer/pictl
+pipx install ~/Developer/pictl
 ```
 
-Editable install means edits under `~/Developer/pictl` take effect immediately — no reinstall needed.
+This installs the `v0.4.0` snapshot, not a live link to the working tree — no further changes are
+planned, so there's no reason to use an editable (`pipx install -e`) install that would silently follow
+local edits. To pick up a future tag, `git checkout <tag>` in the clone and `pipx install --force .`.
 
 If your system's default Python has no prebuilt `Pillow` wheel yet (very new Python version), pin pipx
 to an older interpreter that does, e.g.:
 
 ```bash
-pipx install -e ~/Developer/pictl --python "$(brew --prefix python@3.11)/bin/python3.11"
+pipx install ~/Developer/pictl --python "$(brew --prefix python@3.11)/bin/python3.11"
 ```
 
 ### PIP (upstream package, not this fork)
@@ -192,21 +192,3 @@ Typora → Preferences → Image → Image Uploader → `Custom Command`, and se
 
 Use `pictl`'s absolute path (`which pictl`), since the environment a GUI app launches a process in may
 not have your shell's `PATH`.
-
-## Fork notes (v0.4.0)
-
-Changes on top of upstream [v0.3.0](https://github.com/zhonger/pictl/releases/tag/v0.3.0), kept here
-for my own future reference:
-
-- **Pillow version unpinned** (`^9.3.0` → `>=10.0.0`). Upstream's exact caret range resolves to an old
-  Pillow with no wheel for current Python, so `pip`/`pipx install` fails trying to build it from source.
-- **Alpha channel preserved** in webp output instead of always flattening to RGB.
-- **`cup`/`upload` accept multiple files** (`nargs=-1`) and a `-q/--quiet` flag that prints one bare URL
-  per line and exits non-zero on any failure, with diagnostics on stderr. Needed because upstream's
-  three-line human-readable output (`Direct URL:` / `Markdown:` / `HTML Code:`) isn't something a tool
-  like Typora can parse directly.
-- **`GROUP` is `-g/--group`, not a positional argument** — so `FILENAMES` can be last, matching how
-  Typora's custom-command uploader appends file paths to the end of the configured command.
-- **Compressed output goes to the system temp dir, not the CWD**, and is deleted after upload. Fixes a
-  crash when the caller's working directory is read-only (seen with Typora on macOS).
-- Not published anywhere — installed locally with `pipx install -e`.
