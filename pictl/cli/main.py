@@ -106,10 +106,12 @@ def cup(filenames: tuple, group: str, quiet: bool):
         output = pcom(filename, quiet=quiet)
         if output is None:
             failed = True
+            click.echo(f"Failed to compress: {filename}", err=True)
             continue
         url = pup(output, group, quiet=quiet)
         if url is None:
             failed = True
+            click.echo(f"Failed to upload: {filename}", err=True)
             continue
         if quiet:
             click.echo(url)
@@ -149,6 +151,7 @@ def upload(filenames: tuple, group: str, quiet: bool):
         url = pup(filename, group, quiet=quiet)
         if url is None:
             failed = True
+            click.echo(f"Failed to upload: {filename}", err=True)
             continue
         if quiet:
             click.echo(url)
