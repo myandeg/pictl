@@ -86,18 +86,35 @@ def init():
 
 
 @click.command()
-@click.argument("filename")
+@click.argument("filenames", nargs=-1, required=True)
 @click.argument("group")
-def cup(filename: str, group: str):
-    """Compress image and upload to remote storage (compress and upload).
+@click.option(
+    "-q",
+    "--quiet",
+    is_flag=True,
+    help="Only print the resulting URL(s), one per line, in input order.",
+)
+def cup(filenames: tuple, group: str, quiet: bool):
+    """Compress image(s) and upload to remote storage (compress and upload).
 
     \b
-    FILENAME is the name of the file to compress.
+    FILENAMES is one or more files to compress and upload.
     GROUP is the group in the config file you want to use.
     """
-    output = pcom(filename)
-    if output is not None:
-        pup(output, group)
+    failed = False
+    for filename in filenames:
+        output = pcom(filename, quiet=quiet)
+        if output is None:
+            failed = True
+            continue
+        url = pup(output, group, quiet=quiet)
+        if url is None:
+            failed = True
+            continue
+        if quiet:
+            click.echo(url)
+    if failed:
+        raise SystemExit(1)
 
 
 @click.command()
@@ -112,16 +129,31 @@ def compress(filename, output: str = None):
 
 
 @click.command()
-@click.argument("filename")
+@click.argument("filenames", nargs=-1, required=True)
 @click.argument("group")
-def upload(filename: str, group: str):
-    """Upload the file to remote storage.
+@click.option(
+    "-q",
+    "--quiet",
+    is_flag=True,
+    help="Only print the resulting URL(s), one per line, in input order.",
+)
+def upload(filenames: tuple, group: str, quiet: bool):
+    """Upload the file(s) to remote storage.
 
     \b
-    FILENAME is the name of the file to upload.
+    FILENAMES is one or more files to upload.
     GROUP is the group in the config file you want to use.
     """
-    pup(filename, group)
+    failed = False
+    for filename in filenames:
+        url = pup(filename, group, quiet=quiet)
+        if url is None:
+            failed = True
+            continue
+        if quiet:
+            click.echo(url)
+    if failed:
+        raise SystemExit(1)
 
 
 cli.add_command(config)

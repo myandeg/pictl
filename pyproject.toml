@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pictl"
-version = "0.3.0"
+version = "0.3.0+local"
 description = "A command line tool for image processing and uploading (ex. S3-type)"
 authors = ["zhonger <zhonger@live.cn>"]
 license = "MIT"
@@ -8,7 +8,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-Pillow = "^9.3.0"
+Pillow = ">=10.0.0"
 inquirer = "^3.1.3"
 rich = "^13.4.1"
 click = "^8.1.3"

@@ -8,7 +8,7 @@ from pictl.config import Config
 from pictl.utils import get_content_type, get_object_key
 
 
-def upload(filename: str, group: str) -> None:
+def upload(filename: str, group: str, quiet: bool = False) -> str | None:
     """Upload the file to remote storage.
 
     \b
@@ -17,16 +17,17 @@ def upload(filename: str, group: str) -> None:
     """
     settings = Config().read()
     if group not in settings:
-        rprint(f"No group {group} in configuration file.")
-        groups = list(settings.keys())
-        if "basic" in groups:
-            groups.remove("basic")
-        rprint(f"Please choose one group from below:\n  {groups}")
-    else:
-        upload_s3(settings, filename, group)
+        if not quiet:
+            rprint(f"No group {group} in configuration file.")
+            groups = list(settings.keys())
+            if "basic" in groups:
+                groups.remove("basic")
+            rprint(f"Please choose one group from below:\n  {groups}")
+        return None
+    return upload_s3(settings, filename, group, quiet)
 
 
-def upload_s3(settings: dict, filename: str, group: str):
+def upload_s3(settings: dict, filename: str, group: str, quiet: bool = False):
     resource = {
         "endpoint_url": settings[group]["endpoint"],
         "aws_access_key_id": settings[group]["key"],
@@ -46,15 +47,17 @@ def upload_s3(settings: dict, filename: str, group: str):
             Body=data,
             ContentType=content_type,
         )
-        get_link(settings, filename, group)
+    return get_link(settings, filename, group, quiet)
 
 
-def get_link(settings: dict, filename: str, group: str):
+def get_link(settings: dict, filename: str, group: str, quiet: bool = False) -> str:
     key = get_object_key(filename, settings[group]["prefix"])
     url = f'{settings[group]["url"]}/{key}'
-    filename = filename.split("/")[-1]
-    print(
-        f"Direct URL: {url}\n"
-        f"Markdown: ![{filename}]({url})\n"
-        f'HTML Code: <img src="{url}" alt="{filename}" />\n'
-    )
+    if not quiet:
+        display_name = filename.split("/")[-1]
+        print(
+            f"Direct URL: {url}\n"
+            f"Markdown: ![{display_name}]({url})\n"
+            f'HTML Code: <img src="{url}" alt="{display_name}" />\n'
+        )
+    return url
