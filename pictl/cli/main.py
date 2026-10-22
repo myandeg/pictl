@@ -1,5 +1,7 @@
 """The PICTL module"""
 
+import os
+
 import click
 from rich import print as rprint
 
@@ -108,6 +110,10 @@ def cup(filenames: tuple, group: str, quiet: bool):
             click.echo(f"Failed to compress: {filename}", err=True)
             continue
         url = pup(output, group, quiet=quiet)
+        try:
+            os.remove(output)
+        except OSError:
+            pass
         if url is None:
             failed = True
             click.echo(f"Failed to upload: {filename}", err=True)

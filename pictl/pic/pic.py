@@ -1,5 +1,8 @@
 """Pic module"""
 
+import os
+import tempfile
+
 from PIL import Image
 from rich import print as rprint
 
@@ -30,7 +33,10 @@ def compress(fi: str, fo: str = None, quiet: bool = False):
         if fo:
             filename = f"{fo}.webp"
         else:
-            filename = f"{get_name(fi)}.webp"
+            # Write to the system temp dir, not the CWD: callers like
+            # Typora invoke this with a CWD that can be on a read-only
+            # volume, so a bare relative filename fails to save.
+            filename = os.path.join(tempfile.gettempdir(), f"{get_name(fi)}.webp")
         imgfile.save(filename, "webp", optimize=optimize, quality=quality)
         if not quiet:
             rprint(f"The output file is {filename}")
