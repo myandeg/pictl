@@ -97,7 +97,7 @@ def init():
     help="Only print the resulting URL(s), one per line, in input order.",
 )
 def cup(filenames: tuple, group: str, quiet: bool):
-    """Compress image(s) and upload to remote storage (compress and upload).
+    """Compress image(s) and upload to remote storage.
 
     \b
     FILENAMES is one or more files to compress and upload.
