@@ -122,23 +122,11 @@ secret = "this-is-a-long-secret-for-s3"
 url = "https://i.lisz.me"
 ```
 
-Cloudflare R2 example (the `endpoint` is account-level, `region` is always `"auto"`):
-
-```bash
-[notes]
-type = "R2"
-endpoint = "https://<ACCOUNT_ID>.r2.cloudflarestorage.com"
-bucket = "notes-img"
-region = "auto"
-prefix = "Img"
-key = "<R2_ACCESS_KEY_ID>"
-secret = "<R2_SECRET_ACCESS_KEY>"
-url = "https://img.example.com"
-```
-
-R2 does not implement S3 object ACLs (`x-amz-acl`) — if a client sends anything other than `private`,
-R2 returns `501 NotImplemented`. Public read access has to be set at the bucket level in the Cloudflare
-dashboard (custom domain or `r2.dev` subdomain), not via an ACL header.
+For `type = "R2"`, `endpoint` is the account-level URL (`https://<ACCOUNT_ID>.r2.cloudflarestorage.com`)
+and `region` is always `"auto"`. Note that R2 does not implement S3 object ACLs (`x-amz-acl`) — if a
+client sends anything other than `private`, R2 returns `501 NotImplemented`. Public read access has to
+be set at the bucket level in the Cloudflare dashboard (custom domain or `r2.dev` subdomain), not via an
+ACL header.
 
 ### Interactive way
 
