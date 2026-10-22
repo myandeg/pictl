@@ -87,7 +87,7 @@ def init():
 
 @click.command()
 @click.argument("filenames", nargs=-1, required=True)
-@click.argument("group")
+@click.option("-g", "--group", required=True, help="The group in the config file you want to use.")
 @click.option(
     "-q",
     "--quiet",
@@ -99,7 +99,6 @@ def cup(filenames: tuple, group: str, quiet: bool):
 
     \b
     FILENAMES is one or more files to compress and upload.
-    GROUP is the group in the config file you want to use.
     """
     failed = False
     for filename in filenames:
@@ -132,7 +131,7 @@ def compress(filename, output: str = None):
 
 @click.command()
 @click.argument("filenames", nargs=-1, required=True)
-@click.argument("group")
+@click.option("-g", "--group", required=True, help="The group in the config file you want to use.")
 @click.option(
     "-q",
     "--quiet",
@@ -144,7 +143,6 @@ def upload(filenames: tuple, group: str, quiet: bool):
 
     \b
     FILENAMES is one or more files to upload.
-    GROUP is the group in the config file you want to use.
     """
     failed = False
     for filename in filenames:
